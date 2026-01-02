@@ -3,9 +3,11 @@
 
 -- 1) 직무 목록 중복 없이 출력(직무)
 SELECT DISTINCT job FROM EMP;
+SELECT  job FROM EMP;
 
 -- 2) 직무 + 부서번호 조합의 고유 데이터 추출 (직무,부서번호)
 SELECT DISTINCT job,DEPTNO FROM EMP;
+SELECT job,DEPTNO FROM EMP;
 
 -- 3) 중복 포함하여 전체 출력(직무,부서번호)
 SELECT job,DEPTNO FROM EMP;
