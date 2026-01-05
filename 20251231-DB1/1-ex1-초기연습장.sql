@@ -176,7 +176,7 @@ DEPTNO = 30
 
 -- ### ✅ NOT IN 연산자
 
-SELECT * FROM EMP WHERE DEPTNO NOT IN (10, 30);
+SELECT * FROM EMP WHERE DEPTNO NOT IN(10, 30);
 
 
 
@@ -209,6 +209,7 @@ SELECT * FROM EMP WHERE COMM IS NOT NULL;
 SELECT ENAME FROM EMP WHERE JOB = 'MANAGER'
 UNION
 SELECT ENAME FROM EMP WHERE DEPTNO = 10;
+
 
 -- 2. UNION ALL (중복 포함)
 SELECT ENAME FROM EMP WHERE JOB = 'MANAGER'
@@ -256,4 +257,259 @@ SELECT JOB, INSTR(JOB, 'A') AS A_POS FROM EMP;
 
 -- 실습8 완
 -- ======================================================================2026.01.02
+
+-- 2026.01.05
+-- 교집합, 차집합, 합집합 예시
+
+SELECT EMPNO, DEPTNO, SAL FROM EMP
+WHERE DEPTNO = 10
+UNION
+SELECT EMPNO, DEPTNO, SAL FROM EMP
+WHERE DEPTNO = 20
+ORDER BY SAL;
+
+SELECT DEPTNO, SAL FROM EMP
+WHERE DEPTNO = 10
+UNION
+SELECT DEPTNO, SAL FROM EMP
+WHERE DEPTNO = 20
+ORDER BY SAL;
+
+
+SELECT EMPNO, ENAME, SAL, DEPTNO
+FROM EMP
+INTERSECT
+SELECT EMPNO, ENAME, SAL, DEPTNO
+FROM EMP
+WHERE DEPTNO = 10;
+-- 부서번호가 10번인
+
+SELECT EMPNO, ENAME, SAL, DEPTNO
+FROM EMP
+MINUS
+SELECT EMPNO, ENAME, SAL, DEPTNO
+FROM EMP
+WHERE DEPTNO = 10;
+-- 부서번호 10번을 제외한(차집합)
+
+-- ======================================================================
+
+-- 실습
+
+SELECT * FROM EMP
+WHERE ENAME LIKE '%S';
+
+-- emp 테이블에서 deptno가 30인 사람 중, job이 salesman인 사람 조회
+SELECT * FROM EMP
+WHERE DEPTNO = 30
+INTERSECT
+SELECT * FROM EMP
+WHERE JOB = 'SALESMAN';
+
+SELECT * FROM EMP
+WHERE DEPTNO = 30
+AND JOB = 'SALESMAN';
+
+-- emp 테이블에서 deptno가 20, 30인 사람 중, SAL가 2000 초과인 사람 조회
+-- 집합연산자 사용
+SELECT * FROM EMP
+WHERE DEPTNO IN(20, 30)
+INTERSECT
+SELECT * FROM EMP
+WHERE SAL > 2000;
+
+-- 집합연산자 사용 안함
+SELECT * FROM EMP
+WHERE DEPTNO IN(20, 30)
+AND
+SAL > 2000;
+
+-- EMP테이블에서 SAL이 2000 이상, 3000 이하 외의 데이터 조회
+SELECT * FROM EMP
+WHERE SAL < 2000 OR SAL > 3000;
+
+SELECT * FROM EMP
+WHERE SAL NOT BETWEEN 2000 AND 3000;
+
+SELECT * FROM EMP
+MINUS
+SELECT * FROM EMP
+WHERE SAL BETWEEN 2000 AND 3000;
+
+-- EMP테이블에서 E가 포함된 ENAME(이름) 중에 30번 부서에서, 급여가 1000 이상 2000 이하 외의 사람을 조회
+SELECT * FROM EMP
+WHERE ENAME LIKE '%E%' AND DEPTNO = 30
+MINUS
+SELECT * FROM EMP
+WHERE SAL BETWEEN 1000 AND 2000;
+
+SELECT * FROM EMP
+WHERE ENAME LIKE '%E%' AND DEPTNO = 30
+AND
+SAL NOT BETWEEN 1000 AND 2000;
+
+-- ENP테이블에서 COMM이 없고, JOB이 MANAGER 또는 CLERK인 사람 중에, ENAME 두번째 글자가 L이 아닌 사람 조회
+SELECT * FROM EMP
+WHERE COMM IS NULL
+AND JOB IN('MANAGER','CLERK')
+AND ENAME NOT LIKE '_L%';
+
+SELECT * FROM EMP
+WHERE COMM IS NULL
+AND JOB IN('MANAGER','CLERK')
+MINUS
+SELECT * FROM EMP
+WHERE ENAME LIKE '_L%';
+
+
+SELECT ENAME, SAL FROM EMP
+WHERE SAL BETWEEN 2000 AND 3000;
+
+
+
+
+
+
+-- ======================================================================
+
+-- 오라클 함수
+
+
+SELECT ENAME, UPPER(ENAME), LOWER(ENAME), INITCAP(ENAME)
+FROM EMP;
+
+
+-- 실습
+-- EMP테이블에서 "scott"이란 문자를 변경하지 않고 조회 하시오.
+SELECT ENAME FROM EMP
+WHERE lower(ENAME) = 'scott';
+
+-- 'sc'란 문자가 포함된 데이터를 조회 하시오. 단, 문자를 변경하지 않고.
+SELECT ENAME FROM EMP
+WHERE lower(ENAME) LIKE '%sc%';
+
+SELECT ENAME FROM EMP
+WHERE upper(ENAME) LIKE '%SC%';
+
+
+
+-- EMP테이블에서 이름은 소문자 직책은 대문자로 조회 하시오
+SELECT LOWER(ENAME) AS ENAME, UPPER(JOB) AS JOB FROM EMP;
+
+-- EMP테이블에서 이름과 이름의 길이를 표시하기. 단, 이름의 길이가 5이하인 것만 표시하시오.
+SELECT ENAME, LENGTH(ENAME) FROM EMP
+WHERE LENGTH(ENAME) <= 5;
+
+SELECT ENAME, LENGTH(ENAME) FROM EMP;
+
+
+
+-- SELECT UPPER('%sc%') FROM DUAL;
+SELECT 1 + 1 FROM DUAL;
+SELECT 1 + '1' FROM DUAL;
+
+
+
+-- ======================================================================
+-- SUBSTR, INSTR, REPLACE 데이터 가공
+
+SELECT JOB, SUBSTR(JOB,1,2) FROM EMP;
+-- 해석 : 직책에서 글자의 1번째 자리부터 2개 데이터 추출
+
+SELECT JOB, SUBSTR(JOB,3,2), SUBSTR(JOB,5,4),
+LENGTH(SUBSTR(JOB,5,4)) FROM EMP;
+-- 해석 : 직책에서 글자의 3번째 자리부터 2개 데이터 추출, ...
+
+SELECT JOB, SUBSTR(JOB,3), LENGTH(SUBSTR(JOB,3)) FROM EMP;
+-- 해석 : 3번째 자리에서 부터 문자 끝까지 
+
+
+SELECT JOB, INSTR(JOB, 'K') FROM EMP;
+-- 해석 : 'K'가 몇번째 위치에 있는지 추출
+
+SELECT INSTR('HELLO, ORACLE!', 'L') FROM DUAL;
+
+SELECT INSTR('HELLO, ORACLE!', 'L',5) FROM DUAL;
+
+SELECT INSTR('HELLO, ORACLE!', 'L',2,2) FROM DUAL;
+
+
+
+-- 실습
+-- EMP테이블 사원명(ENAME) 중에 's'가 포함된 사원들을 조회 하시오.
+SELECT * FROM EMP
+WHERE ENAME LIKE UPPER('%s%');
+
+SELECT * FROM EMP
+WHERE INSTR(ENAME, UPPER('s')) > 0;
+
+
+-- REPLACE
+SELECT ENAME, REPLACE(ENAME,'S','!') FROM EMP;
+
+SELECT ENAME, REPLACE(ENAME,'K') FROM EMP;
+
+
+-- 실습
+-- 010-1234-5678
+SELECT '010-1234-5678'
+,REPLACE('010-1234-5678','-')
+,SUBSTR('010-1234-5678',-9,4)
+,SUBSTR('010-1234-5678',-4,4) FROM DUAL;
+
+SELECT '010-1234-5678'
+,REPLACE('010-1234-5678','-')
+,SUBSTR('010-1234-5678',5,4)
+,SUBSTR('010-1234-5678',10,4) FROM DUAL;
+
+-- ======================================================================
+-- LPAD, RPAD, CONCAT
+
+SELECT '010-1234-', '790126-1'
+,LPAD('12345',10,'#')
+,RPAD('12345',10,'*')
+,LPAD('12345',3,'#')
+,RPAD('12345',3,'*')
+ FROM DUAL;
+
+SELECT '010-1234-', '790126-1'
+,RPAD('010-1234-',LENGTH('010-1234-')+4,'*')
+,RPAD('790126-1',LENGTH('790126-1')+6,'*')
+ FROM DUAL;
+
+SELECT '010-1234-', '790126-1'
+,RPAD('010-1234-', 13,'*')
+,RPAD('790126-1',14,'*')
+ FROM DUAL;
+
+SELECT '010-1234-5678', '790126-1111111'
+,RPAD(SUBSTR('010-1234-5678',1,9),LENGTH('010-1234-5678'),'*')
+,RPAD(SUBSTR('790126-1111111',1,8),LENGTH('790126-1111111'),'*')
+ FROM DUAL;
+
+SELECT CONCAT('PHONE','JUMIN') FROM DUAL;
+
+SELECT CONCAT(ENAME,EMPNO) FROM EMP;
+SELECT CONCAT(CONCAT('사번:',EMPNO), CONCAT(' 성명:',ENAME)) FROM EMP;
+SELECT '사번:'||EMPNO||' 성명:'||ENAME FROM EMP;
+
+
+-- TRIM, LTRIM, RTRIM
+
+SELECT '[ ' || ' _oracle_ ' || ' ]'
+, trim('[_oracle_]')
+from dual;
+
+-- ======================================================================
+-- ROUND, ...
+
+SELECT
+      SAL/3
+    , ROUND(SAL/3,2)
+    , TRUNC(SAL/3,2)
+    ,MOD(EMPNO,2)
+FROM EMP;
+
+SELECT * FROM EMP
+WHERE MOD(EMPNO,2) = 0;
 
