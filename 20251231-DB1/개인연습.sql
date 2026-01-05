@@ -86,3 +86,53 @@ FROM EMP
 UNION
 SELECT DNAME, '부서' 
 FROM DEPT;
+
+
+
+
+-- [문제 1] EMP 테이블에서 이름(ENAME)이 'K'로 시작하거나, 
+-- 부서 번호(DEPTNO)가 30번인 사원의 사원번호, 이름, 부서번호를 조회하세요.
+SELECT EMPNO, ENAME, DEPTNO
+FROM EMP
+WHERE ENAME LIKE 'K%'
+OR
+DEPTNO = 30;
+
+
+-- [문제 2] 급여(SAL)가 2000 이상인 사원들 중에서 
+-- 이름에 'L'이 두 번 포함된 사원의 모든 정보를 조회하세요.
+-- 힌트: LIKE와 와일드카드 %를 적절히 조합해보세요.
+SELECT * 
+FROM EMP
+WHERE SAL >= 2000
+AND
+ENAME LIKE '%L%L%';
+
+
+
+-- [문제 3] 사원 번호(EMPNO)가 짝수이면서, 
+-- 커미션(COMM)이 NULL이 아닌 사원의 이름과 커미션을 출력하세요.
+SELECT ENAME, COMM
+FROM EMP
+WHERE MOD(EMPNO,2)=0
+AND COMM IS NOT NULL;
+
+
+-- [문제 4] 집합 연산자 사용하기
+-- 'SALESMAN' 직급을 가진 사원들의 이름과 
+-- 'ANALYST' 직급을 가진 사원들의 이름을 '직급별사원'이라는 컬럼명으로 합쳐서 출력하세요.
+-- (단, UNION을 사용하고 이름순으로 정렬하세요.)
+SELECT ENAME AS "직급별사원" FROM EMP
+WHERE JOB = 'SALESMAN'
+UNION
+SELECT ENAME AS "직급별사원" FROM EMP
+WHERE JOB = 'ANALYST'
+ORDER BY "직급별사원";
+
+
+-- [문제 5] 함수 응용
+-- 이름(ENAME)의 세 번째 글자가 'A'인 사원을 찾고, 
+-- 그 사원의 이름을 출력할 때 'A'를 '★'로 바꿔서 출력하세요.
+-- (컬럼명은 "수정이름"으로 표시하세요.)
+SELECT REPLACE(ENAME,'A','★') AS "수정이름" FROM EMP
+WHERE ENAME LIKE '__A%';

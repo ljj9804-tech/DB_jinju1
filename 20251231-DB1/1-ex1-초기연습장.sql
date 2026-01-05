@@ -172,7 +172,7 @@ SELECT * FROM EMP WHERE DEPTNO = 10
 OR
 DEPTNO = 20
 OR
-DEPTNO = 30
+DEPTNO = 30;
 
 -- ### ✅ NOT IN 연산자
 
@@ -513,3 +513,4 @@ FROM EMP;
 SELECT * FROM EMP
 WHERE MOD(EMPNO,2) = 0;
 
+-- ======================================================= ~154P(6-3)
