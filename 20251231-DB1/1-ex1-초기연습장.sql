@@ -63,7 +63,7 @@ SELECT JOB, DEPTNO FROM EMP;
 SELECT ENAME FROM EMP;
 SELECT ENAME AS "사원명" FROM EMP;
 
--- "" 사용하기(AS와 같은 효과)
+-- ""(큰따옴표) 사용할 경우(AS와 같은 효과)
 SELECT ENAME "사원명" FROM EMP;
 
 -- 가독성을 위해 "AS" 사용 권장
@@ -86,19 +86,17 @@ SELECT * FROM EMP
 ORDER BY SAL DESC;
 -- 급여를 내림차순으로 정렬("DESC")(2)
 
--- 📌실습 팁 : 날짜의 경우 내림차순 정렬 = 최신순 이 됨
-
 -- 여러 열 기준으로 정렬(각 열에 다른 정렬)(3)
 SELECT ENAME, SAL, DEPTNO FROM EMP
 ORDER BY DEPTNO ASC, SAL DESC;
 
 -- 열 인덱스를 기준으로 정렬(4)
 SELECT ENAME, JOB, SAL
-FROM EMP;
-
-SELECT ENAME, JOB, SAL
 FROM EMP
 ORDER BY 3 DESC;
+
+-- 📌실습 팁 : 날짜의 경우 내림차순 정렬 = 최신순 이 됨
+
 
 -- 실습4 완
 -- ================================================================================
@@ -257,4 +255,5 @@ SELECT JOB, INSTR(JOB, 'A') AS A_POS FROM EMP;
 
 
 -- 실습8 완
--- ================================================================================2026.01.02
+-- ======================================================================2026.01.02
+
