@@ -536,20 +536,34 @@ WHERE MOD(EMPNO,2) = 0;
 -- 날짜 함수
 SELECT SYSDATE FROM DUAL;
 
+SELECT SYSDATE AS NOW
+     , SYSDATE-1 AS YESTERDAY
+     , SYSDATE+1 AS TOMORROW
+FROM DUAL;
+
+
 -- 실습
 -- EMP테이블, 입사일 20주년 되는 날짜를 구하시오(표시는 사번, 이름, 입사일, 20주년일)
 SELECT EMPNO, ENAME, HIREDATE, MONTHS_BETWEEN(HIREDATE, SYSDATE)
 FROM EMP
 WHERE ADD_MONTHS(HIREDATE, 480) < SYSDATE;
 
+
+SELECT SYSDATE, ADD_MONTHS(SYSDATE, 2) FROM DUAL;
+
+
 SELECT SYSDATE, NEXT_DAY(SYSDATE,'월') FROM DUAL;
+
+
 
 SELECT SYSDATE, LAST_DAY(SYSDATE) FROM DUAL;
 
+
+
+
 -- 데이터 타입 변경
 SELECT
-  TO_CHAR(1)
-  , 1
+  TO_CHAR(SYSDATE, 'YYYY-MM-DD')
 FROM DUAL;
 
 SELECT
@@ -581,11 +595,13 @@ ORDER BY HIREDATE;
 -- NULL
 
 SELECT
-    NVL(COMM,0)
-  , NVL(ENAME,'A')
-  , NVL2(COMM,1,10)
+    NVL(COMM,0) /*COMM 값이 NULL이면 0으로 반환_숫자형 값에 숫자형 반환*/
+  , NVL(ENAME,'A') /*ENAME 값이 NULL이면 'A'반환_문자형 값에 문자형 반환*/
+  , NVL2(COMM,1,10) /*COMM 값이 NULL이 아니면 1, 맞으면 10 반환*/
   , NVL2(COMM,COMM,10)
 FROM EMP;
+
+
 
 -- 실습(174P)
 SELECT EMPNO, ENAME, COMM
@@ -635,7 +651,7 @@ FROM EMP;
 
 
 
-SELECT JOB, SAL, COMM
+SELECT JOB
     , DECODE(JOB
           , 'MANAGER', 1
           , 'SALESMAN', 2
@@ -665,6 +681,8 @@ SELECT EMPNO, ENAME, COMM
         WHEN COMM > 0 THEN '수당 : ' || COMM
       END AS COMM_TEXT
 FROM EMP;
+
+
 
 -- 실습9 ing
 
@@ -700,3 +718,7 @@ SELECT *
 FROM DEPT_TEM;
 
 DROP TABLE DEPT_TEMP;
+
+
+
+-- =========================================================2026.01.06
