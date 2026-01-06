@@ -391,10 +391,10 @@ WHERE lower(ENAME) LIKE '%sc%';
 SELECT ENAME FROM EMP
 WHERE upper(ENAME) LIKE '%SC%';
 
-
-
 -- EMP테이블에서 이름은 소문자 직책은 대문자로 조회 하시오
 SELECT LOWER(ENAME) AS ENAME, UPPER(JOB) AS JOB FROM EMP;
+
+
 
 -- EMP테이블에서 이름과 이름의 길이를 표시하기. 단, 이름의 길이가 5이하인 것만 표시하시오.
 SELECT ENAME, LENGTH(ENAME) FROM EMP
@@ -445,7 +445,10 @@ WHERE INSTR(ENAME, UPPER('s')) > 0;
 
 
 -- REPLACE
-SELECT ENAME, REPLACE(ENAME,'S','!') FROM EMP;
+SELECT ENAME, REPLACE(ENAME,'K','!') FROM EMP;
+
+
+
 
 SELECT ENAME, REPLACE(ENAME,'K') FROM EMP;
 
@@ -465,7 +468,8 @@ SELECT '010-1234-5678'
 -- ======================================================================
 -- LPAD, RPAD, CONCAT
 
-SELECT '010-1234-', '790126-1'
+SELECT '010-1234-'
+,'790126-1'
 ,LPAD('12345',10,'#')
 ,RPAD('12345',10,'*')
 ,LPAD('12345',3,'#')
@@ -487,10 +491,23 @@ SELECT '010-1234-5678', '790126-1111111'
 ,RPAD(SUBSTR('790126-1111111',1,8),LENGTH('790126-1111111'),'*')
  FROM DUAL;
 
+
+
+
+
+
 SELECT CONCAT('PHONE','JUMIN') FROM DUAL;
 
+
+
+
+
 SELECT CONCAT(ENAME,EMPNO) FROM EMP;
+
+
 SELECT CONCAT(CONCAT('사번:',EMPNO), CONCAT(' 성명:',ENAME)) FROM EMP;
+
+
 SELECT '사번:'||EMPNO||' 성명:'||ENAME FROM EMP;
 
 
@@ -514,3 +531,172 @@ SELECT * FROM EMP
 WHERE MOD(EMPNO,2) = 0;
 
 -- ======================================================= ~154P(6-3)
+2026.01.06
+
+-- 날짜 함수
+SELECT SYSDATE FROM DUAL;
+
+-- 실습
+-- EMP테이블, 입사일 20주년 되는 날짜를 구하시오(표시는 사번, 이름, 입사일, 20주년일)
+SELECT EMPNO, ENAME, HIREDATE, MONTHS_BETWEEN(HIREDATE, SYSDATE)
+FROM EMP
+WHERE ADD_MONTHS(HIREDATE, 480) < SYSDATE;
+
+SELECT SYSDATE, NEXT_DAY(SYSDATE,'월') FROM DUAL;
+
+SELECT SYSDATE, LAST_DAY(SYSDATE) FROM DUAL;
+
+-- 데이터 타입 변경
+SELECT
+  TO_CHAR(1)
+  , 1
+FROM DUAL;
+
+SELECT
+  TO_DATE('2024-08-14', 'YYYY-MM-DD') AS TODATE1
+  , TO_DATE('2024/08/14', 'YYYY/MM/DD') AS TODATE2
+FROM DUAL;
+
+-- 실습
+-- 최초 입사자와 각각 입사자의 근무일차를 구하시오.
+-- 사번, 이름, 입사일, 차이일
+-- 최초입사자, 그일자를 카피(문자), 날짜 - 날짜
+
+SELECT EMPNO, ENAME, HIREDATE, HIREDATE - TO_DATE('1980/12/17','YYYY/MM/DD')
+FROM EMP
+ORDER BY HIREDATE;
+-- 17/12/1980 12:00:00
+
+
+-- 추가문제
+-- 최초입사자와 1년 이상 차이가 나는 사원 조회
+SELECT EMPNO, ENAME, HIREDATE, HIREDATE - TO_DATE('1980/12/17','YYYY/MM/DD') AS "차이일"
+FROM EMP
+WHERE (HIREDATE - TO_DATE('1980/12/17','YYYY/MM/DD')) >= 365
+ORDER BY HIREDATE;
+-- 17/12/1980 12:00:00
+
+
+-- =======================================================
+-- NULL
+
+SELECT
+    NVL(COMM,0)
+  , NVL(ENAME,'A')
+  , NVL2(COMM,1,10)
+  , NVL2(COMM,COMM,10)
+FROM EMP;
+
+-- 실습(174P)
+SELECT EMPNO, ENAME, COMM
+  , NVL2(COMM,'O','X')
+  -- , NVL2(COMM, 1, 2)
+  , NVL2(COMM, SAL*12+COMM, SAL*12) AS ANNSAL
+FROM EMP;
+
+-- DECODE, CASE
+/*
+ex)
+DECODE(1,2,3,4)
+1 == 2
+3
+
+ELSE
+4
+*/
+
+/*
+ex)
+DECODE(1,2,3,4,5,6)
+1 == 2
+3
+
+ELSE
+4 == 5
+
+ELSE
+6
+*/
+
+-- 실습(174P)+추가/ 값이 0 이면//
+SELECT EMPNO, ENAME, COMM
+  , DECODE(COMM, 0,'X', NULL,'X', 'O')
+  , NVL2(COMM, SAL*12+COMM, SAL*12) AS ANNSAL
+FROM EMP;
+
+
+SELECT EMPNO, ENAME, JOB, SAL
+    , DECODE(JOB
+          , 'MANAGER', SAL * 1.1
+          , 'SALESMAN', SAL * 1.05
+          , 'ANALYST', SAL
+          , SAL * 1.03) AS UPSAL1
+FROM EMP;
+
+
+
+SELECT JOB, SAL, COMM
+    , DECODE(JOB
+          , 'MANAGER', 1
+          , 'SALESMAN', 2
+          , 'ANALYST', 3
+          , 4)
+          AS UPSAL1
+
+    , CASE JOB
+          WHEN 'MANAGER' THEN 1
+          WHEN 'SALESMAN' THEN 2
+          WHEN 'ANALYST' THEN 3
+          ELSE 4
+          END AS UPSAL2
+    
+    , CASE 
+          WHEN JOB = 'MANAGER' THEN 1
+          WHEN ENAME = 'SMITH' THEN 2
+          WHEN COMM IS NULL THEN 3
+          ELSE 4
+          END AS UPSAL3
+FROM EMP;
+
+SELECT EMPNO, ENAME, COMM
+    , CASE
+        WHEN COMM IS NULL THEN '해당 사항 없음'
+        WHEN COMM = 0 THEN '수당 없음'
+        WHEN COMM > 0 THEN '수당 : ' || COMM
+      END AS COMM_TEXT
+FROM EMP;
+
+-- 실습9 ing
+
+-- GROUP BY
+-- 평균급여의 소수점 세번째에서 반올림(.**)
+SELECT ROUND(AVG(SAL),2), '10' AS DEPTNO
+FROM EMP
+WHERE DEPTNO = 10
+UNION ALL
+SELECT ROUND(AVG(SAL),2), '20'
+FROM EMP
+WHERE DEPTNO = 20
+UNION ALL
+SELECT ROUND(AVG(SAL),2), '30'
+FROM EMP
+WHERE DEPTNO = 30
+GROUP BY DEPTNO;
+
+SELECT
+    DEPTNO, SUM(SAL)
+FROM EMP
+WHERE DEPTNO IN(10,20)
+GROUP BY DEPTNO
+    HAVING SUM(SAL) = 10875
+;
+
+-- 그룹함수는 WHERE절에 넣을 수 없음
+
+CREATE TABLE DEPT_TEM
+    AS SELECT * FROM DEPT;
+
+SELECT *
+FROM DEPT_TEM;
+
+DROP TABLE DEPT_TEMP;
