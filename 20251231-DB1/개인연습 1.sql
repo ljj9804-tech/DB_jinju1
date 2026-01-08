@@ -136,3 +136,6 @@ ORDER BY "직급별사원";
 -- (컬럼명은 "수정이름"으로 표시하세요.)
 SELECT REPLACE(ENAME,'A','★') AS "수정이름" FROM EMP
 WHERE ENAME LIKE '__A%';
+
+
+
