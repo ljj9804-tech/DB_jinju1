@@ -720,6 +720,13 @@ FROM DEPT_TEM;
 DROP TABLE DEPT_TEMP;
 
 
+SELECT DEPTNO, ENAME, SUM(SAL)
+FROM EMP
+GROUP BY DEPTNO;
+/*SELECT절 안에 DEPTNO, ENAME이 있다면 GROUP BY절에도 넣어주기*/
+
+
+
 
 -- =========================================================2026.01.06
 -- 2026.01.07
